@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "readline-sync": "^1.4.10"
+  },
+  "name": "battleship-cli-app",
+  "version": "1.0.0",
+  "description": "Today we're going to build a game of battleship in your CLI (Command Line Interface)",
+  "main": "battleship.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-game": "node battleship.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
