@@ -50,7 +50,6 @@ function printBoard(board, debug = false) {
   console.table(boardDisplay);
 }
 
-
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
@@ -100,20 +99,21 @@ function placeAllShips(board, shipConfigs) {
   });
 }
 
-function getUserGuess(board, callback) {
-  const guess = readlineSync.question('Enter a guess (e.g., A1, B2): ');
-  const [row, col] = parseGuess(guess);
-  if (isValidGuess(row, col, board)) {
-    callback(row, col);
-  } else {
-    console.log('Invalid guess, try again.');
-    getUserGuess(board, callback);
+function getUserGuess(board) {
+  while (true) {
+    const guess = readlineSync.question('Enter a guess (e.g., A1, B2): ');
+    const [row, col] = parseGuess(guess);
+    if (isValidGuess(row, col, board)) {
+      return [row, col];
+    } else {
+      console.log('Invalid guess, try again.');
+    }
   }
 }
 
 function parseGuess(guess) {
   const row = guess[0].toUpperCase().charCodeAt(0) - 65;
-  const col = parseInt(guess[1]) - 1;
+  const col = parseInt(guess[1]);
   return [row, col];
 }
 
@@ -154,28 +154,27 @@ function startGame() {
 
   let totalHits = shipConfigs.reduce((sum, ship) => sum + ship.size, 0);
 
-  while (true) {
+  while (totalHits > 0) {
     printBoard(board);
-    getUserGuess(board, (row, col) => {
-      const cell = board[row][col];
-      if (cell.hit) {
-        console.log('You already guessed that spot!');
-      } else {
-        cell.hit = true;
-        if (cell.type !== 'empty') {
-          console.log(`You hit a ${cell.type} ship!`);
-          totalHits--;
-          if (totalHits === 0) {
-            console.log('Congratulations! You have sunk all the ships!');
-            printBoard(board);
-            console.log(asciiArt);
-            startGame();
-          }
-        } else {
-          console.log('Miss!');
+    const [row, col] = getUserGuess(board);
+    const cell = board[row][col];
+    if (cell.hit) {
+      console.log('You already guessed that spot!');
+    } else {
+      cell.hit = true;
+      if (cell.type !== 'empty') {
+        console.log(`You hit a ${cell.type} ship!`);
+        totalHits--;
+        if (totalHits === 0) {
+          console.log('Congratulations! You have sunk all the ships!');
+          printBoard(board);
+          console.log(asciiArt);
+          startGame();
         }
+      } else {
+        console.log('Miss!');
       }
-    });
+    }
   }
 }
 
